@@ -3,7 +3,6 @@ from wordlist import *
 from english_words import english_words_lower_alpha_set
 
 mainList = []
-pastWhitelists = []
 count = 0
 
 
@@ -35,40 +34,40 @@ def main():
 def whiteList(whitelistInput, whitelistPositionInput):
     global mainList
     tempList = []
-    pastWhitelists.append(whitelistInput)
 
     for word in mainList:
-        if word[int(whitelistPositionInput)] == whitelistInput:
+        if word[whitelistPositionInput] == whitelistInput:
             tempList.append(word)
     mainList = tempList
     
 
 def blackList(blacklistInput):
     global mainList
-    tempCount = 0
+    tempList = []
 
-    blacklistInput = list(blacklistInput)
-    for x in blacklistInput:
-        if x not in pastWhitelists:
-            mainList = [ele for ele in mainList if all(ch not in ele for ch in blacklistInput)]
-        else:
-            for word in mainList:
-                for i in range(5):
-                    if word[i] in pastWhitelists:
-                        tempCount = tempCount + 1
-                        if tempCount == 2:
-                            mainList.remove(word)
+    for word in mainList:
+        for char in word:
+            if char == blacklistInput:
+                tempList.append(word)
 
-def softlist(yellowInput):
+    for item in tempList:
+        if item in mainList:
+            mainList.remove(item)
+    tempList = []
+
+def softlist(yellowInput, letterIndex):
     global mainList
     yellowHistory = []
 
     yellowInput = list(yellowInput)
-    for word in yellowInput:
-        if word not in yellowHistory:
-            yellowHistory.append(word)
+    for letter in yellowInput:
+        if letter not in yellowHistory:
+            yellowHistory.append(letter)
     
     mainList = [ele for ele in mainList if all(ch in ele for ch in yellowInput)]
+    for word in mainList:
+        if word[letterIndex] == yellowInput[0]:
+            mainList.remove(word)
     
 
 
@@ -91,7 +90,7 @@ def fullInput():
             quit()
         optimizedChoices.clear()
     else:
-        randomWord = "soare"
+        randomWord = "tares"
     
     count = 1
 
@@ -109,10 +108,13 @@ def fullInput():
     for x in wordColorList:
         if x == "b":
             blackList(fullWordList[cycle])
+            print(mainList)
         elif x == "y":
-            softlist(fullWordList[cycle])
+            softlist(fullWordList[cycle],cycle)
+            print(mainList)
         elif x == "g":
             whiteList(fullWordList[cycle], cycle)
+            print(mainList)
         else:
             print("Choice is invalid.")
             fullInput()
