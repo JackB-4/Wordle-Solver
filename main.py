@@ -9,7 +9,7 @@ count = 0
 
 
 def main():
-    if wordSize != 5:
+    if wordSize != "5":
         wordChoice = "3"
     else:
         print("Choose which word bank to use.")
