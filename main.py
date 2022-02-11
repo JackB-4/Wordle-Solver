@@ -1,4 +1,3 @@
-from calendar import c
 import random
 from collections import Counter
 from wordlist import *
