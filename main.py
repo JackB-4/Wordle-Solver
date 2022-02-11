@@ -1,33 +1,38 @@
+from calendar import c
 import random
+from collections import Counter
 from wordlist import *
 from english_words import english_words_lower_alpha_set
 
+wordSize = input("How large is the word you are guessing?")
 mainList = []
 count = 0
 
 
 def main():
-    print("Choose which word bank to use.")
-    print("1. Wordle Answer Bank")
-    print("2. Wordle Full Bank")
-    print("3. Large English Bank")
-    wordChoice = input()
+    if wordSize != 5:
+        wordChoice = "3"
+    else:
+        print("Choose which word bank to use.")
+        print("1. Wordle Answer Bank")
+        print("2. Wordle Full Bank")
+        print("3. Large English Bank")
+        wordChoice = input()
+
     if wordChoice == "1":
         for x in conciseWords:
-            if len(x) == 5:
-                mainList.append(x)
+            mainList.append(x)
     elif wordChoice == "2":
         for x in words:
-            if len(x) == 5:
-                mainList.append(x)
+            mainList.append(x)
     elif wordChoice == "3":
         for x in english_words_lower_alpha_set:
-            if len(x) == 5:
+            if len(x) == int(wordSize):
                 mainList.append(x)
     else:
         print("Choice is invalid.")
         main()
-
+    #print(mainList)
     fullInput()
 
 
@@ -55,19 +60,19 @@ def blackList(blacklistInput):
             mainList.remove(item)
     tempList = []
 
-def softlist(yellowInput, letterIndex):
+def softlist(yellowInput, letterIndex, colorTrue):
     global mainList
-    yellowHistory = []
-
-    yellowInput = list(yellowInput)
-    for letter in yellowInput:
-        if letter not in yellowHistory:
-            yellowHistory.append(letter)
+    tempList = []
     
-    mainList = [ele for ele in mainList if all(ch in ele for ch in yellowInput)]
     for word in mainList:
-        if word[letterIndex] == yellowInput[0]:
-            mainList.remove(word)
+        if yellowInput in word and colorTrue == True:
+            tempList.append(word)
+        elif colorTrue == False:
+            tempList.append(word)
+    mainList = tempList
+    for item in mainList:
+        if item[letterIndex] == yellowInput:
+            mainList.remove(item)
     
 
 
@@ -89,8 +94,11 @@ def fullInput():
             print("Word not found in database.")
             quit()
         optimizedChoices.clear()
-    else:
+    elif count == 0 and wordSize == "5":
         randomWord = "tares"
+    else:
+        print(mainList)
+        randomWord = random.choice(mainList)
     
     count = 1
 
@@ -100,21 +108,29 @@ def fullInput():
     print("Recommended Word: " + randomWord)
     fullWord = input("Type the last entered word with no punctuation.")
     fullWordList = [char for char in fullWord]
+    #Dupe correction
+    counts = Counter(fullWordList)
+    dupes = [value for value, count in counts.items() if count > 1]
+    # print(dupes)
 
+    #Function triggering
     wordColors = input("Type the letter of the color of each letter with no spaces. (b,y,g)")
     wordColorList = [char for char in wordColors]
 
     cycle = 0
     for x in wordColorList:
-        if x == "b":
+        if x == "b" and fullWordList[cycle] not in dupes:
             blackList(fullWordList[cycle])
-            print(mainList)
+            # print("Post Blacklist: ", mainList)
         elif x == "y":
-            softlist(fullWordList[cycle],cycle)
-            print(mainList)
+            softlist(fullWordList[cycle],cycle, True)
+            # print("Post Softlist: ", mainList)
         elif x == "g":
             whiteList(fullWordList[cycle], cycle)
-            print(mainList)
+            # print("Post Whitelist: ", mainList)
+        elif x == "b" and fullWordList[cycle] in dupes:
+            softlist(fullWordList[cycle], cycle, False)
+            # print("Post DupeList: ", mainList)
         else:
             print("Choice is invalid.")
             fullInput()
