@@ -32,7 +32,7 @@ def main():
     else:
         print("Choice is invalid.")
         main()
-    #print(mainList)
+    print(mainList)
     fullInput()
 
 
@@ -63,16 +63,18 @@ def blackList(blacklistInput):
 def softlist(yellowInput, letterIndex, colorTrue):
     global mainList
     tempList = []
+    tempCountList = []
     
     for word in mainList:
         if yellowInput in word and colorTrue == True:
             tempList.append(word)
         elif colorTrue == False:
             tempList.append(word)
-    mainList = tempList
-    for item in mainList:
+    tempCountList = tempList
+    for item in tempCountList:
         if item[letterIndex] == yellowInput:
-            mainList.remove(item)
+            tempList.remove(item)
+    mainList = tempList
     
 
 
@@ -121,16 +123,16 @@ def fullInput():
     for x in wordColorList:
         if x == "b" and fullWordList[cycle] not in dupes:
             blackList(fullWordList[cycle])
-            # print("Post Blacklist: ", mainList)
+            #print("Post Blacklist: ", mainList)
         elif x == "y":
             softlist(fullWordList[cycle],cycle, True)
-            # print("Post Softlist: ", mainList)
+            #print("Post Softlist: ", mainList)
         elif x == "g":
             whiteList(fullWordList[cycle], cycle)
-            # print("Post Whitelist: ", mainList)
+            #print("Post Whitelist: ", mainList)
         elif x == "b" and fullWordList[cycle] in dupes:
             softlist(fullWordList[cycle], cycle, False)
-            # print("Post DupeList: ", mainList)
+            #print("Post DupeList: ", mainList)
         else:
             print("Choice is invalid.")
             fullInput()
