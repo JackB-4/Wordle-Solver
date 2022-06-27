@@ -1,3 +1,0 @@
-Check inputted word for duplicate letters
-store all found dupes in list
-ignore all dupes in whitelist, blacklist, and softlist(further thought required)
